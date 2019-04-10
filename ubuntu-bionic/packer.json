@@ -1,0 +1,49 @@
+{
+      "variables": {
+          "image_url": "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img",
+          "image_checksum_url": "https://cloud-images.ubuntu.com/bionic/current/SHA256SUMS",
+          "image_checksum_type": "sha256",
+          "image_name": "ubuntu-bionic",
+          "ssh_private_key_file": "{{env `PACKER_PRIVATE_KEY`}}"
+      },
+    "builders": [
+        {
+            "type": "qemu",
+            "iso_url": "{{user `image_url`}}",
+            "iso_checksum_url": "{{user `image_checksum_url`}}",
+            "iso_checksum_type": "{{user `image_checksum_type`}}",
+            "shutdown_command": "rm -rf /home/ubuntu/.ssh/authorized_keys && sudo rm -rf /root/.ssh/authorized_keys && echo 'packer' | sudo -S shutdown -P now",
+            "disk_size": 3000,
+            "format": "qcow2",
+            "communicator": "ssh",
+            "ssh_username": "ubuntu",
+            "ssh_private_key_file": "{{user `ssh_private_key_file`}}",
+            "ssh_timeout": "20m",
+            "ssh_port": 22,
+            "disk_image": true,
+            "vm_name": "{{user `image_name`}}.qcow2",
+            "use_default_display": true,
+            "disk_interface": "virtio",
+            "vnc_port_min": 5910,
+            "vnc_port_max": 5910,
+            "qemuargs": [
+                ["-fda", "seed.img"]]
+        }
+    ],
+    "provisioners": [
+        {"type": "file",
+         "source": "{{user `image_name`}}/cloud-init",
+         "destination": "/tmp"
+        },
+        {"type": "shell",
+         "execute_command": "chmod +x {{.Path}}; sudo {{.Path}}",
+         "scripts": [
+             "scripts/cloud-password-module.sh",
+             "scripts/grub-exoscale.sh",
+             "scripts/lock-root.sh",
+             "{{user `image_name`}}/script.sh",
+             "scripts/cloud-cleanup.sh"
+         ]
+        }
+    ]
+}
