@@ -14,10 +14,14 @@ Once the key is generated, you should export 2 environment variables:
 Launch the `build.sh` script with the name of the directory you want to build as a parameter, for example:
 
 ```
-build.sh ubuntu-bionic
+./build.sh ubuntu-bionic
 ```
 
 You can also export `PACKER_LOG=1` te see more Packer logs.
+
+## Clone OpenBSD cloud init
+
+In order to build the OpenBSD image, you should clone the [OpenBSD Cloud Init](https://github.com/exoscale/openbsd-cloud-init) repository at the root of the project.
 
 ## How it works
 
@@ -33,7 +37,6 @@ Then, Packer will execute a serie of script on the virtual machine (to configure
 When the Virtual machine is stopped by Packer, the `shutdown_command` is executed. In this command, we remove all public keys from the `.ssh/authorized_keys` files.
 
 Packer will create the resulting virtual machine in the `output-qemu` directory.
-
 
 ## Debug the build
 

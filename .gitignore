@@ -2,3 +2,4 @@ output-qemu
 packer_cache
 seed.img
 user-data
+openbsd-cloud-init

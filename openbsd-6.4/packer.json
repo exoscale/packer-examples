@@ -1,0 +1,68 @@
+{
+      "variables": {
+          "image_url": "http://ftp.fr.openbsd.org/pub/OpenBSD/6.4/amd64/install64.iso",
+          "image_checksum_url": "http://ftp.fr.openbsd.org/pub/OpenBSD/6.4/amd64/SHA256",
+          "image_checksum_type": "sha256",
+          "image_name": "openbsd-6.4",
+          "ssh_password": "{{uuid}}"
+      },
+    "builders": [
+        {
+            "type": "qemu",
+            "iso_url": "{{user `image_url`}}",
+            "iso_checksum_url": "{{user `image_checksum_url`}}",
+            "iso_checksum_type": "{{user `image_checksum_type`}}",
+            "shutdown_command": "/sbin/halt -p",
+            "disk_size": 12000,
+            "format": "qcow2",
+            "ssh_username": "root",
+            "ssh_password": "{{user `ssh_password`}}",
+            "vm_name": "{{user `image_name`}}.qcow2",
+            "use_default_display": true,
+            "disk_interface": "virtio",
+            "vnc_port_min": 5910,
+            "vnc_port_max": 5910,
+            "boot_wait": "30s",
+            "boot_command": [
+                "I<enter><wait>",
+                "<enter><wait>",
+                "openbsd<enter><wait>",
+                "vio0<enter><wait>",
+                "dhcp<enter><wait>",
+                "none<enter><wait>",
+                "<enter><wait>",
+                "<enter><wait>",
+                "{{user `ssh_password`}}<enter><wait>",
+                "{{user `ssh_password`}}<enter><wait>",
+                "yes<enter><wait>",
+                "no<enter><wait>",
+                "no<enter><wait>",
+                "no<enter><wait>",
+                "yes<enter><wait>",
+                "Europe/Zurich<enter><wait>",
+                "sd0<enter><wait>",
+                "whole<enter><wait>",
+                "a<enter><wait10>",
+                "cd<enter><wait>",
+                "6.4/amd64<enter><wait>",
+                "done<enter><wait>",
+                "yes<enter><wait60>",
+                "done<enter><wait10>",
+                "r<enter><wait>"
+            ]
+        }
+    ],
+    "provisioners": [
+        {"type": "file",
+         "source": "openbsd-cloud-init/cloud-init.pl",
+         "destination": "/usr/local/libdata/cloud-init.pl"
+        },
+        {"type": "shell",
+         "inline": ["perl /usr/local/libdata/cloud-init.pl deploy"]
+        },
+        {"type": "file",
+         "source": "{{user `image_name`}}/hostname.vio0",
+         "destination": "/etc/hostname.vio0"
+        }
+    ]
+}
