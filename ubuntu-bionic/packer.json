@@ -25,7 +25,7 @@
             "use_default_display": true,
             "disk_interface": "virtio",
             "vnc_port_min": 5910,
-            "vnc_port_max": 5910,
+            "vnc_port_max": 5920,
             "qemuargs": [
                 ["-fda", "seed.img"]]
         }
