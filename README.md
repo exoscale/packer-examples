@@ -19,6 +19,12 @@ Launch the `build.sh` script with the name of the directory you want to build as
 
 You can also export `PACKER_LOG=1` te see more Packer logs.
 
+### Mac user
+
+You can use `build-docker.sh` script with the name of the directory you want to build as a parameter.
+This script will use [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/install/), which should be already installed, and will create a 
+container to run Packer.
+
 ## Clone OpenBSD cloud init
 
 In order to build the OpenBSD image, you should clone the [OpenBSD Cloud Init](https://github.com/exoscale/openbsd-cloud-init) repository at the root of the project.
