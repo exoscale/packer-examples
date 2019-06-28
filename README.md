@@ -1,17 +1,23 @@
-# How to build Exoscale templates with Packer and Qemu
+# How to build Exoscale templates with Packer and QEMU
 
-## Generates a keypair
+## Requirements
 
-In order to build the template, you need a public/private keypair. This key will be used by Packer to configure t he machine through SSH.
+Before starting, you must ensure that you have the following components installed on your machine:
 
-Once the key is generated, you should export 2 environment variables:
+* [Packer](http://packer.io/downloads.html)
+* [QEMU](https://www.qemu.org/)
+* The `cloud-localds` tool (usually found in the `cloud-image-utils` package for Debian/Ubuntu based systems)
 
-- `PACKER_PUBLIC_KEY`: the path to your public key.
-- `PACKER_PRIVATE_KEY`: the path to your private key.
+Additionally, in order to build the template you need a public/private SSH key pair. This key will be used by Packer to configure the machine through SSH.
 
-## Build the image
+Once the key is generated, you must export 2 environment variables:
 
-Launch the `build.sh` script with the name of the directory you want to build as a parameter, for example:
+- `PACKER_PUBLIC_KEY`: the path to the public SSH key.
+- `PACKER_PRIVATE_KEY`: the path to the private SSH key.
+
+## Building images
+
+Run the `build.sh` script followed by the name of the directory corresponding to the image you want to build as a parameter, for example:
 
 ```
 ./build.sh ubuntu-bionic
@@ -21,29 +27,24 @@ You can also export `PACKER_LOG=1` te see more Packer logs.
 
 ### Mac user
 
-You can use `build-docker.sh` script with the name of the directory you want to build as a parameter.
-This script will use [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/install/), which should be already installed, and will create a 
-container to run Packer.
+On macOS, you can use `build-docker.sh` script with the name of the directory you want to build as a parameter. This script will use [Docker Desktop for Mac](https://docs.docker.com/docker-for-mac/install/) (which must be already installed), and will create a container to run Packer.
 
-## Clone OpenBSD cloud init
+### How it works
 
-In order to build the OpenBSD image, you should clone the [OpenBSD Cloud Init](https://github.com/exoscale/openbsd-cloud-init) repository at the root of the project.
+The script will:
 
-## How it works
+1. Write an `user-data` file containing the generated public key
+1. Create a new cloud init disk using the `cloud-localds` command
+1. Run the `packer build` command
 
-The script will
+During this last step, Packer will read the `<image directory>/packer.json` file then start a QEMU virtual machine and configure it through SSH. Once the VM has booted, Packer will copy the *cloud-init* configuration for Exoscale into the machine, then perform a series of tasks in the VM (configure *cloud-init*, do some cleanup, activate the password authentication etc.). When the VM is stopped by Packer, the `shutdown_command` is executed. In this command, we remove all public keys from the `.ssh/authorized_keys` files.
 
-- Write an `user-data` file containing the generated public key.
-- Create a new cloud init disk using the `cloud-localds` command (you should have this command available in your PATH).
-- Launch `packer build` on the packer.json file
+Packer will create the resulting VM template in the `output-qemu` directory.
 
-The `packer.json` file will start the virtual machine, and configure it through SSH. Once the VM booted, Packer will copy the cloud init configuration for Exoscale into the machine.
-Then, Packer will execute a serie of script on the virtual machine (to configure cloud init, do some cleanup, activate the password authentication...).
+### OpenBSD images
 
-When the Virtual machine is stopped by Packer, the `shutdown_command` is executed. In this command, we remove all public keys from the `.ssh/authorized_keys` files.
+In order to build an OpenBSD image, you must clone the [openbsd-cloud-init](https://github.com/exoscale/openbsd-cloud-init) repository at the root of the project.
 
-Packer will create the resulting virtual machine in the `output-qemu` directory.
+## Debugging the build process
 
-## Debug the build
-
-You can connect to the virtual machine through VNC on he port `5910`.
+You can connect to the virtual machine through VNC on the port `5910`.
