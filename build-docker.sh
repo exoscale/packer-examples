@@ -16,7 +16,7 @@ function error() {
 
 function usage() {
     echo "" >&2
-    echo "Usage: PACKER_PUBLIC_KEY=~/.ssh/id_rsa.pub PACKER_PRIVATE_KEY=~/.ssh/id_rsa build.sh IMAGE" >&2
+    echo "Usage: PACKER_PUBLIC_KEY=~/.ssh/id_rsa.pub PACKER_PRIVATE_KEY=~/.ssh/id_rsa build-docker.sh IMAGE" >&2
     echo "" >&2
     echo "  IMAGE: the name of the subdirectory to build" >&2
     echo "" >&2
