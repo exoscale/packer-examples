@@ -1,7 +1,7 @@
 {
       "variables": {
-          "image_url": "http://ftp.fr.openbsd.org/pub/OpenBSD/6.4/amd64/install64.iso",
-          "image_checksum_url": "http://ftp.fr.openbsd.org/pub/OpenBSD/6.4/amd64/SHA256",
+          "image_url": "https://ftp.fr.openbsd.org/pub/OpenBSD/6.4/amd64/install64.iso",
+          "image_checksum_url": "https://ftp.fr.openbsd.org/pub/OpenBSD/6.4/amd64/SHA256",
           "image_checksum_type": "sha256",
           "image_name": "openbsd-6.4",
           "ssh_password": "{{uuid}}"
@@ -13,7 +13,8 @@
             "iso_checksum_url": "{{user `image_checksum_url`}}",
             "iso_checksum_type": "{{user `image_checksum_type`}}",
             "shutdown_command": "/sbin/halt -p",
-            "disk_size": 12000,
+            "disk_size": 51200,
+            "disk_compression": true,
             "format": "qcow2",
             "ssh_username": "root",
             "ssh_password": "{{user `ssh_password`}}",
@@ -31,7 +32,7 @@
                 "dhcp<enter><wait>",
                 "none<enter><wait>",
                 "<enter><wait>",
-                "<enter><wait>",
+                "example.com<enter><wait>",
                 "{{user `ssh_password`}}<enter><wait>",
                 "{{user `ssh_password`}}<enter><wait>",
                 "yes<enter><wait>",
