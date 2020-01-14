@@ -1,10 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-yum upgrade -y
+yum update -y
 
-# install missing packages
-
-yum install -y wget
-
-# clean for real
 cloud-init clean
